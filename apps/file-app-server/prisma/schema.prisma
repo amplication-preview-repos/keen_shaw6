@@ -1,0 +1,42 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model DataEnrichment {
+  createdAt         DateTime @default(now())
+  enrichmentDetails String?
+  file              File?    @relation(fields: [fileId], references: [id])
+  fileId            String?
+  id                String   @id @default(cuid())
+  processedData     Json?
+  updatedAt         DateTime @updatedAt
+}
+
+model File {
+  createdAt       DateTime         @default(now())
+  databases       Database[]
+  dataEnrichments DataEnrichment[]
+  filecontent     Json?
+  filename        String?
+  id              String           @id @default(cuid())
+  status          EnumFileStatus?
+  updatedAt       DateTime         @updatedAt
+}
+
+model Database {
+  createdAt   DateTime @default(now())
+  dataContent Json?
+  file        File?    @relation(fields: [fileId], references: [id])
+  fileId      String?
+  id          String   @id @default(cuid())
+  updatedAt   DateTime @updatedAt
+}
+
+enum EnumFileStatus {
+  Option1
+}
